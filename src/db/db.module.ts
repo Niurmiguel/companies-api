@@ -16,7 +16,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         database: config.get('POSTGRES_DB'),
         entities: [__dirname + '/../persistence/**/*.entity{.ts,.js}'],
         synchronize: true,
-        ssl: true,
+        ssl: false,
       }),
     }),
   ],
