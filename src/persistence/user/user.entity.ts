@@ -15,6 +15,12 @@ class UserEntity {
   @Column()
   @Exclude()
   password: string;
+
+  @Column({
+    nullable: true,
+  })
+  @Exclude()
+  public currentHashedRefreshToken?: string;
 }
 
 export default UserEntity;

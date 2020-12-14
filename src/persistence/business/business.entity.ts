@@ -12,8 +12,8 @@ import {
 
 @Entity()
 class BusinessEntity {
-  @PrimaryGeneratedColumn('uuid')
-  public id: string;
+  @PrimaryGeneratedColumn()
+  public id: number;
 
   @Column()
   public name: string;

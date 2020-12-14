@@ -12,7 +12,6 @@
     "baseUrl": "./",
     "incremental": true,
     "paths": {
-      "@constants": ["src/constants"],
       "@domain/*": ["src/domain/*"],
       "@api/*": ["src/api/*"],
       "@persistence/*": ["src/persistence/*"],

@@ -5,6 +5,7 @@ import { IUserRepository } from '@domain/user/user.repository';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/payload.interface';
+import PgErrorCode from '../db/pgErrorCode.enum';
 
 const UserRepo = () => Inject('UserRepo');
 
@@ -27,12 +28,12 @@ export class AuthProvider {
       createdUser.password = undefined;
       return createdUser;
     } catch (error) {
-      // if (error?.code === PostgresErrorCode.UniqueViolation) {
-      //   throw new HttpException(
-      //     'User with that email already exists',
-      //     HttpStatus.BAD_REQUEST,
-      //   );
-      // }
+      if (error?.code === PgErrorCode.UniqueViolation) {
+        throw new HttpException(
+          'User with that email already exists',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       throw new HttpException(
         'Something went wrong',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -78,7 +79,25 @@ export class AuthProvider {
     )}`;
   }
 
-  public getCookieForLogOut() {
-    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
+  public getCookieWithJwtRefreshToken(userId: string) {
+    const payload: JwtPayload = { userId };
+    const token = this._jwt.sign(payload, {
+      secret: this._config.get('JWT_REFRESH_TOKEN_SECRET'),
+      expiresIn: `${this._config.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME')}s`,
+    });
+    const cookie = `Refresh=${token}; HttpOnly; Path=/; Max-Age=${this._config.get(
+      'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
+    )}`;
+    return {
+      cookie,
+      token,
+    };
+  }
+
+  public getCookiesForLogOut() {
+    return [
+      'Authentication=; HttpOnly; Path=/; Max-Age=0',
+      'Refresh=; HttpOnly; Path=/; Max-Age=0',
+    ];
   }
 }

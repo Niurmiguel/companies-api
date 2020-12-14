@@ -22,7 +22,7 @@ import UpdateScheduleDto from './dto/update.dto';
 
 @Controller('schedule')
 @UseInterceptors(ClassSerializerInterceptor)
-export default class LanguagesController {
+export default class ScheduleController {
   constructor(
     private readonly _scheduleCreate: ScheduleCreate,
     private readonly _scheduleGet: ScheduleGet,

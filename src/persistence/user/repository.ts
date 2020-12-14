@@ -4,6 +4,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import UserEntity from './user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -37,5 +38,31 @@ export class UserRepository implements IUserRepository {
       'User with this id does not exist',
       HttpStatus.NOT_FOUND,
     );
+  }
+
+  async setCurrentRefreshToken(refreshToken: string, userId: string) {
+    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await this._user.update(userId, {
+      currentHashedRefreshToken,
+    });
+  }
+
+  async getUserIfRefreshTokenMatches(refreshToken: string, userId: string) {
+    const user = await this.getById(userId);
+
+    const isRefreshTokenMatching = await bcrypt.compare(
+      refreshToken,
+      user.currentHashedRefreshToken,
+    );
+
+    if (isRefreshTokenMatching) {
+      return user;
+    }
+  }
+
+  async removeRefreshToken(userId: string) {
+    return this._user.update(userId, {
+      currentHashedRefreshToken: null,
+    });
   }
 }

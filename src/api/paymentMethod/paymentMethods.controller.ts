@@ -20,9 +20,9 @@ import { PaymentMethodDelete } from '@domain/paymentMethods/delete';
 import CreatePaymentMethodDto from './dto/create.dto';
 import UpdatePaymentMethodDto from './dto/update.dto';
 
-@Controller('schedule')
+@Controller('payment_method')
 @UseInterceptors(ClassSerializerInterceptor)
-export default class LanguagesController {
+export default class PaymentMethodsController {
   constructor(
     private readonly _paymentMethodCreate: PaymentMethodCreate,
     private readonly _paymentMethodGet: PaymentMethodGet,
