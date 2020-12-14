@@ -9,9 +9,12 @@ jobs:
   docker_hub:
     runs_on: ubuntu-latest
     steps:
-      uses: actions/checkout@v2
-      uses: docker/build-push-action@v1
-      with:
-        username: ${{secrets.DOCKER_USER}}
-        password: ${{secrets.DOCKER_PASSWORD}}
-        repository: ${{secrets.DOCKER_USER}}/companies_api
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: build image
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{secrets.DOCKER_USER}}
+          password: ${{secrets.DOCKER_PASSWORD}}
+          repository: ${{secrets.DOCKER_USER}}/companies_api
