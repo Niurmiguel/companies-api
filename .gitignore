@@ -2,6 +2,9 @@
 /dist
 /node_modules
 
+dev-docker-compose.yml
+.env
+
 # Logs
 logs
 *.log
