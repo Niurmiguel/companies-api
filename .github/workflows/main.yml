@@ -30,3 +30,65 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.DOCKER_USER }}/companies-api:latest
+
+      - name: Login azure
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+
+      - name: Deployment
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{secrets.APP_NAME}}
+          images: niurmiguelg/companies-api
+
+      - name: Variables
+        uses: azure/appservice-settings@v1
+        with:
+          app-name: ${{secrets.APP_NAME}}
+          app-settings-json: |
+            [
+              {
+                "name": "POSTGRES_HOST",
+                "value": "${{secrets.POSTGRES_HOST}}",
+                "slotSettings": false
+              },
+              {
+                "name": "POSTGRES_PORT",
+                "value": "${{secrets.POSTGRES_PORT}}",
+                "slotSettings": false
+              },
+              {
+                "name": "POSTGRES_USER",
+                "value": "${{secrets.POSTGRES_USER}}",
+                "slotSettings": false
+              },
+              {
+                "name": "POSTGRES_PASSWORD",
+                "value": "${{secrets.POSTGRES_PASSWORD}}",
+                "slotSettings": false
+              },
+              {
+                "name": "POSTGRES_DB",
+                "value": "${{secrets.POSTGRES_DB}}",
+                "slotSettings": false
+              },
+              {
+                "name": "PORT",
+                "value": "${{secrets.PORT}}",
+                "slotSettings": false
+              },
+              {
+                "name": "JWT_SECRET",
+                "value": "${{secrets.JWT_SECRET}}",
+                "slotSettings": false
+              },
+              {
+                "name": "JWT_EXPIRATION_TIME",
+                "value": "${{secrets.JWT_EXPIRATION_TIME}}",
+                "slotSettings": false
+              }
+            ]
+      - name: Logout
+        run: |
+          az logout
